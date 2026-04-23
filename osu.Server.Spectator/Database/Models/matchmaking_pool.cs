@@ -4,6 +4,8 @@
 // ReSharper disable InconsistentNaming (matches database table)
 
 using System;
+using System.Linq;
+using osu.Game.Online.API;
 using osu.Game.Online.Matchmaking;
 
 namespace osu.Server.Spectator.Database.Models
@@ -38,13 +40,15 @@ namespace osu.Server.Spectator.Database.Models
         /// </summary>
         public int rating_search_radius_exp { get; set; }
 
+        public APIMod[] required_mods { get; set; } = Array.Empty<APIMod>();
+
         public MatchmakingPool ToMatchmakingPool() => new MatchmakingPool
         {
             Id = (int)id,
             RulesetId = ruleset_id,
             Variant = variant_id,
             Name = name,
-            Type = type.ToPoolType()
+            Type = type.ToPoolType(),
         };
 
         public string DisplayName
@@ -54,7 +58,7 @@ namespace osu.Server.Spectator.Database.Models
                 switch (ruleset_id)
                 {
                     case 0:
-                        return $"osu! ({name})";
+                        return $"osu! ({name}) ([{string.Join(", ", required_mods.Select(m => m.Acronym))}])";
 
                     case 1:
                         return $"osu!taiko ({name})";

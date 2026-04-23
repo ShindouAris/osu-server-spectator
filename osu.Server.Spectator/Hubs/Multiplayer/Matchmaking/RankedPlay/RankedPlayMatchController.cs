@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using osu.Game.Online.Multiplayer;
 using osu.Game.Online.Multiplayer.MatchTypes.RankedPlay;
 using osu.Game.Online.RankedPlay;
@@ -90,9 +91,13 @@ namespace osu.Server.Spectator.Hubs.Multiplayer.Matchmaking.RankedPlay
             matchmaking_pool_beatmap[] beatmaps = beatmapSelector.GetAppropriateBeatmaps(DECK_SIZE, users.Select(u => u.Rating).ToArray());
             Random.Shared.Shuffle(beatmaps);
 
+            var poolData = await DbFactory.GetInstance().GetMatchmakingPoolAsync(poolId);
+            
+
             foreach (var beatmap in beatmaps)
             {
                 var card = new RankedPlayCardItem();
+                beatmap.mods = JsonConvert.SerializeObject(poolData?.required_mods ?? []);
                 cardToEffectMap[card] = beatmap.ToPlaylistItem();
                 deck.Add(card);
             }

@@ -22,6 +22,7 @@ namespace osu.Server.Spectator.Tests.Matchmaking
                         name = $"pool-{id}",
                         active = true,
                         lobby_size = 2,
+                        required_mods = [],
                     }));
 
             Database.Setup(db => db.GetRealtimeRoomAsync(0))
